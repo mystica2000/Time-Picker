@@ -38,7 +38,6 @@ export class Time
         }
         i++;
       }
-      console.log(this.minutesValues)
     }
     
 
@@ -71,7 +70,6 @@ export class Time
         {
           this.isAMactive = false;
         }
-        console.log(this.isAMactive)
     }
 
 
@@ -79,7 +77,8 @@ export class Time
     {
       e.stopPropagation();
       e.preventDefault();
-      console.log(e.type)
+      
+      this.toggleFocus(e,true)
       if(e.type=="mousedown" || e.type=="touchstart")
       {
       if(str == ChangeState.INC) // Increment 
@@ -107,8 +106,7 @@ export class Time
       
       this.timeouts = setTimeout(
           () => {
-            console.log("what")
-            this.changeHour(e,str)}, 500);
+            this.changeHour(e,str)}, 200);
       }
       else if(e.type == "mouseup" || e.type == "mouseleave" || e.type=="touchend")
       {
@@ -120,9 +118,10 @@ export class Time
     {
       e.stopPropagation();
       e.preventDefault();
-      console.log(e.type)
       if(e.type=="mousedown" || e.type=="touchstart")
       {
+        
+      this.toggleFocus(e,false)
       if(str == ChangeState.INC)
       {
         this.minuteIndex = this.minuteIndex + 1;
@@ -144,10 +143,13 @@ export class Time
         this.isMinuteDownActive = true;
       }
       this.minute = this.minutesValues[this.minuteIndex]
+
       
       this.timeouts = setTimeout(
         () => {
-          this.changeMinute(e,str)}, 500);
+          this.changeMinute(e,str)}, 200);
+
+      
       }
       else if(e.type == "mouseup" || e.type == "mouseleave" || e.type=="touchend")
       {
@@ -161,6 +163,7 @@ export class Time
       this.isHourActive = val;
       evt.stopPropagation()
       evt.preventDefault();
+
     }
 
     minuteEvent(e)
@@ -245,13 +248,7 @@ export class Time
 
     clearTimeOuts()
     {
-      console.log("OVER EH?")
       clearTimeout(this.timeouts);
-    }
-
-    c()
-    {
-      this.leftTopTriangle.style.backgroundColor = "Red";
     }
 
     render()
@@ -259,7 +256,7 @@ export class Time
         return (
             <div class="grid-box">
                  <div class="container">
-                   <span class={"hour "+ (this.isHourActive ? "bgChange":"bgChangeNormal")} tabindex="0" onClick={($evt)=> this.toggleFocus($evt,true)}>
+                   <span class={"hour "+ (this.isHourActive ? "bgChange":"bgChangeNormal")} tabindex="0" onMouseDown={($evt)=> this.toggleFocus($evt,true)}>
                      <span class="triangle" onMouseDown={(e)=>{this.changeHour(e,ChangeState.INC)}}
                      onTouchStart={(e)=>{this.changeHour(e,ChangeState.INC)}}
                      onTouchEnd={(e)=>{this.changeHour(e,ChangeState.INC)}}
@@ -271,7 +268,6 @@ export class Time
                      <input class="hours" type="text" inputmode="numeric" value={this.hour} onInput={(e)=>{this.hourEvent(e)}}
                      ref={(el) => this.hourInput = el as HTMLInputElement}
                      onClick={()=>{this.moveCursorToEnd(this.hourInput)}}/>
-                     {/* <div contentEditable="true" onKeyPress={(e)=>{console.log(this.hour)}}>{this.hour}</div> */}
                      <span class="triangle"
                      onMouseDown={(e)=>{this.changeHour(e,ChangeState.DEC)}}
                      onTouchStart={(e)=>{this.changeHour(e,ChangeState.DEC)}}
@@ -294,7 +290,12 @@ export class Time
                      <input class="hours" type="text" inputmode="numeric" value={this.minute} onInput={(e)=>{this.minuteEvent(e)}}
                      ref={(el) => this.minuteInput = el as HTMLInputElement}
                      onClick={()=>{this.moveCursorToEnd(this.minuteInput)}}/>
-                     <span class="triangle">
+                     <span class="triangle"
+                     onMouseDown={(e)=>{this.changeMinute(e,ChangeState.DEC)}}
+                     onTouchStart={(e)=>{this.changeMinute(e,ChangeState.DEC)}}
+                     onTouchEnd={(e)=>{this.changeMinute(e,ChangeState.DEC)}}
+                     onMouseUp={(e)=>{this.changeMinute(e,ChangeState.DEC)}}
+                     onMouseLeave={(e)=>{this.changeMinute(e,ChangeState.DEC)}}>
                      <span class={"triangle-shape "+ (this.isMinuteDownActive==false || this.isHourActive==true ? "triangle-down-off":"triangle-down-on")}></span>
                      </span>
                    </span>
